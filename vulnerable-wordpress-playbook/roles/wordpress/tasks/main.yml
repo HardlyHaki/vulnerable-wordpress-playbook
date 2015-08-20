@@ -1,0 +1,7 @@
+---
+- include: gcc.yml
+- include: httpd.yml
+- include: mysql.yml
+- include: php.yml
+- include: webmin.yml
+- include: wordpress.yml

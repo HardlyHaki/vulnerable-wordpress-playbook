@@ -1,0 +1,5 @@
+---
+- name: be sure gcc is installed
+  yum: pkg=gcc state=installed
+  tags: gcc
+

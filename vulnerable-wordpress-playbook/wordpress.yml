@@ -1,0 +1,10 @@
+---
+- hosts: wordpress
+  remote_user: ec2-user
+  sudo: yes
+  roles:
+    - wordpress
+  vars_prompt:
+    - name: "dbpassword"
+      prompt: "Please enter MySQL wordpress user password"
+      default: "wordpress"

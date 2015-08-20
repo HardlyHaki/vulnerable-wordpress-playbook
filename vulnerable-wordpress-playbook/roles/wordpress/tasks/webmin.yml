@@ -1,0 +1,10 @@
+---
+- name: be sure  webmin is installed
+  command: 'bash -lc "{{ item }}"'
+  with_items:
+    - ' sudo  yum -y install  http://download.webmin.com/download/yum/webmin-1.750-1.noarch.rpm'
+  tags: webmin
+
+- name: be sure webmin is running and enabled
+  service: name=webmin state=started enabled=yes
+  tags: webmin

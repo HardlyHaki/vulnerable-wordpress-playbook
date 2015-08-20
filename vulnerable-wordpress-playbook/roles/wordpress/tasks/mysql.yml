@@ -1,0 +1,42 @@
+---
+- name: install mysql packages
+  yum:
+    name:  '{{ item }}'
+    state: present
+  with_items:
+    - http://repo.mysql.com/mysql-community-release-el6-4.noarch.rpm
+    - mysql-server
+    - mysql-devel
+    - libselinux-python
+
+- name: install mysql python module (via yum)
+  when: not ansible_distribution == 'Amazon'
+  yum:
+    name:  MySQL-python
+    state: present
+
+- name: install mysql python module (from source)
+  when: ansible_distribution == 'Amazon' # Amazon Linux AMI
+  command: 'bash -lc "{{ item }}"'
+  with_items:
+    - 'cd /usr/tmp && wget https://pypi.python.org/packages/source/M/MySQL-python/MySQL-python-1.2.5.zip'
+    - 'cd /usr/tmp && unzip /usr/tmp/MySQL-python-1.2.5.zip'
+    - 'cd /usr/tmp/MySQL-python-1.2.5 && python setup.py build'
+    - 'cd /usr/tmp/MySQL-python-1.2.5 && python setup.py install'
+    - 'rm -rf /usr/tmp/MySQL-python*'
+
+- name: be sure mysqld is running and enabled
+  service: name=mysqld state=started enabled=yes
+  tags: mysqld
+
+- name: Create database
+  mysql_db: db={{dbname}} state=present encoding=utf8
+  tags: mysqld
+
+- name: Create database user
+  mysql_user: >
+    name={{dbuser}}
+    password="{{dbpassword}}"
+    priv={{dbname}}.*:ALL
+    state=present
+  tags: mysqld

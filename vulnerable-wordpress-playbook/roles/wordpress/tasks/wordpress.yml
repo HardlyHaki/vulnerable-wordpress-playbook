@@ -1,0 +1,49 @@
+---
+- name: install wpcli
+  command: 'bash -lc "{{ item }}"'
+  with_items:
+    - 'curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar'
+    - 'chmod +x wp-cli.phar'
+    - 'sudo mv wp-cli.phar /usr/local/bin/wp'
+    - 'export PATH=/usr/local/bin/:$PATH'
+
+- name: download  wordpress
+  command: 'bash -lc "{{ item }}"'
+  with_items:
+    - 'sudo -u apache /usr/local/bin/wp core download --version={{wordpress_version}} --path=/var/www/wordpress --locale=ja'
+
+- name:  configure  wordpress
+  command: 'bash -lc "{{ item }}"'
+  with_items:
+    - 'sudo -u apache /usr/local/bin/wp core config --path=/var/www/wordpress --dbname=wordpress --dbuser=wordpress --dbpass=wordpress'
+
+- name:  install  wordpress
+  command: 'bash -lc "{{ item }}"'
+  with_items:
+    - 'sudo -u apache /usr/local/bin/wp core install --path=/var/www/wordpress --url="{{ inventory_hostname }}" --title="wp-valnerble-site" --admin_user="admin" --admin_email="test@example.com" --admin_password="admin"'
+
+- name: install wordpress plugin - fancy box 3.0.2
+  command: 'bash -lc "{{ item }}"'
+  with_items:
+    - 'sudo -u apache /usr/local/bin/wp plugin install fancybox-for-wordpress --version=3.0.2 --path=/var/www/wordpress --user=admin --activate  --url="{{ inventory_hostname }}"'
+
+- name: install wordpress plugin - MailePoet 2.6.6
+  command: 'bash -lc "{{ item }}"'
+  with_items:
+    - 'sudo -u apache /usr/local/bin/wp plugin install wysija-newsletters --version=2.6.6 --path=/var/www/wordpress --user=admin --activate  --url="{{ inventory_hostname }}"'
+
+- name: install wordpress plugin - wp-filemanager 1.2
+  command: 'bash -lc "{{ item }}"'
+  with_items:
+    - 'sudo -u apache /usr/local/bin/wp plugin install wp-filemanager --version=1.2 --path=/var/www/wordpress --user=admin --activate  --url="{{ inventory_hostname }}"'
+
+- name: install wordpress plugin - welcart 1.2.1
+  command: 'bash -lc "{{ item }}"'
+  with_items:
+    - 'sudo -u apache /usr/local/bin/wp plugin install usc-e-shop --version=1.2.1 --path=/var/www/wordpress --user=admin --activate  --url="{{ inventory_hostname }}"'
+
+
+- name: activate welcart_default theme
+  command: 'bash -lc "{{ item }}"'
+  with_items:
+    - 'sudo -u apache /usr/local/bin/wp theme activate welcart_default   --path=/var/www/wordpress --user=admin  --url="{{ inventory_hostname }}"'
